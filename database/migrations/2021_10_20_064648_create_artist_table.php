@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class Artist extends Migration
+class CreateArtistTable extends Migration
 {
     /**
      * Run the migrations.
@@ -16,10 +16,9 @@ class Artist extends Migration
         Schema::create('artist', function (Blueprint $table) {
             $table->bigIncrements('artist_id');
             $table->string('name');
-            $table->bigInteger('id')->unsigned();
-        });
-        Schema::table("artist",function($table){
-            $table->foreign('id')->references('id')->on("users");
+            $table->bigInteger('user_id')->unsigned();
+            //////foreign keys
+            $table->foreign('user_id')->references('id')->on("users");
         });
     }
 

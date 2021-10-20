@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class Song extends Migration
+class CreateAlbumsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class Song extends Migration
      */
     public function up()
     {
-        Schema::create('song', function (Blueprint $table) {
-            $table->bigIncrements('song_id');
+        Schema::create('albums', function (Blueprint $table) {
+            $table->bigIncrements('album_id');
             $table->bigInteger('artist_id')->unsigned();
-            $table->string('song_name');
-            $table->longText('lyrics');
-        });
-        Schema::table("song",function($table){
+            $table->string('album_title')->nullable();
+            $table->longText('album_cover')->nullable();
+            //////foreign keys
             $table->foreign('artist_id')->references('artist_id')->on("artist");
         });
     }
@@ -31,6 +30,6 @@ class Song extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('albums');
     }
 }
