@@ -15,12 +15,15 @@ class CreateTracksTable extends Migration
     {
         Schema::create('tracks', function (Blueprint $table) {
             $table->bigIncrements('track_id');
-            $table->bigInteger('album_id')->unsigned();
+            $table->bigInteger('artist_id')->unsigned();
             $table->string('track_name');
             $table->longText('mp3')->nullable();
             $table->longText('lyrics');
+            $table->foreignId('album_id')->nullable();
             //////foreign keys
+
             $table->foreign('artist_id')->references('artist_id')->on("artist");
+            $table->foreign('album_id')->references('album_id')->on("albums")->nullOnDelete();
         });
     }
 

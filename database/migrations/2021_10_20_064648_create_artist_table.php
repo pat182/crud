@@ -17,8 +17,10 @@ class CreateArtistTable extends Migration
             $table->bigIncrements('artist_id');
             $table->string('name');
             $table->bigInteger('user_id')->unsigned();
+            $table->timestamps();
             //////foreign keys
             $table->foreign('user_id')->references('id')->on("users");
+            
         });
     }
 
