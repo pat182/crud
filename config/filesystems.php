@@ -27,6 +27,21 @@ return [
     | Supported Drivers: "local", "ftp", "sftp", "s3"
     |
     */
+    'sftp' => [
+        'driver' => 'sftp',
+        'host' => 'localhost',
+        'username' => '',
+        'password' => '',
+
+        // Settings for SSH key based authentication...
+        // 'privateKey' => '/path/to/privateKey',
+        // 'password' => 'encryption-password',
+
+        // Optional SFTP Settings...
+        // 'port' => 22,
+        // 'root' => '',
+        // 'timeout' => 30,
+    ],
 
     'disks' => [
 

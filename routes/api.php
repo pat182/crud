@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\{ArtistController,AlbumsController,TracksController};
+use App\Http\Controllers\{ArtistController,AlbumsController,TracksController,FileController};
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +19,8 @@ use App\Http\Controllers\{ArtistController,AlbumsController,TracksController};
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
+///file
+Route::post('/upload',[FileController::class,'up']);
 //artis
 Route::post('/artist/fillter',[ArtistController::class,"artistFillter"]);
 Route::resource('/artist',ArtistController::class);

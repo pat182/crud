@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Http\Traits\TrackTrait;
 use App\Models\{Artist,Albums,Tracks};
 
 
@@ -11,6 +12,7 @@ class ArtistController extends Controller
     /**
      * @return \Illuminate\Http\Response
      */
+    use TrackTrait;
     public function index()
     {
         return Artist::all();
@@ -26,9 +28,11 @@ class ArtistController extends Controller
         $artist_attr = $params['artist'];
         $album_attr = $artist_attr['albums'];
         $track_attr = $artist_attr['tracks_to_artist'];  
+      
         $validate = $params->validate([
              'artist.name' => ['required','unique:artist,name']
         ]);
+
         if($validate){
             DB::beginTransaction();
             $artist = Artist::create([
@@ -40,7 +44,7 @@ class ArtistController extends Controller
                 DB::commit();    
             }else{
                 if(!empty($album_attr)){
-                    foreach($album_attr as $value){
+                    foreach($album_attr as $key => $value){
                         $aData = [
                                     'artist_id'=>$artist_id,
                                     'album_title'=>$value['album_title'],
@@ -49,27 +53,35 @@ class ArtistController extends Controller
                         $album = Albums::create($aData);
                         $album_id = $album['album_id'];
                         if(!empty($value["tracks_to_album"])){
-                            foreach($value["tracks_to_album"] as $vx){
-                                if($vx['track_name'] =="" || $vx['mp3']==""){
+                            foreach($value["tracks_to_album"] as $key2 => $vx){
+                                if($vx['track_name'] ==""){
                                     DB::rollback();
                                     return response("Please fill out the form", 401);
                                 }
                                 $vx["artist_id"] = $artist_id;
                                 $vx['album_id'] = $album_id;
-                                $tracks = Tracks::create($vx);
+                                $track_id = $this->InsertTrack($vx,[$key,$key2],$request,false);
+                                if(!$track_id){
+                                    DB::rollback();
+                                    return response("no file uploaded", 401);
+                                }
                             }
                         }
                     }
                 }
                 if(!empty($track_attr)){
-                    foreach($track_attr as $value){
-                        if($value['track_name'] =="" || $value['mp3']==""){
+                    foreach($track_attr as $key => $value){
+                        if($value['track_name'] ==""){
                             DB::rollback();
                             return response("Please fill out the form", 401);
                         }
                         $value["artist_id"] = $artist_id;
                         $value['album_id'] = null;
-                        $tracks = Tracks::create($value);
+                        $track_id = $this->InsertTrack($value,[$key],$request,false);
+                        if(!$track_id){
+                            DB::rollback();
+                            return response("no file uploaded", 401);
+                        }
                     } 
                 }
             }

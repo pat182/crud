@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use App\Models\{Artist,Albums,Tracks,TracksToArtist,TracksToAlbum};
+use App\Models\{Artist,Albums,Tracks};
+use App\Http\Traits\TrackTrait;
 
 class TracksController extends Controller
 {
+    use TrackTrait;
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +17,7 @@ class TracksController extends Controller
      */
     public function index()
     {
-        $tracks = DB::select("SELECT t.track_id,t.artist_id,t.track_name,a.name,ab.album_title,ab.album_id FROM tracks t
+        $tracks = DB::select("SELECT t.track_id,t.artist_id,t.track_name,t.mp3,a.name,ab.album_title,ab.album_id FROM tracks t
                                 LEFT JOIN artist a ON t.artist_id = a.artist_id
                                 LEFT JOIN albums ab on ab.artist_id = a.artist_id");
         return $tracks;
@@ -33,18 +35,13 @@ class TracksController extends Controller
              'track_name' => ['required']
         ]);
         if($validate){
-            if($params['album_id']){
-                
+            $track_id = $this->InsertTrack($params);
+            if($track_id){
+                 return response("Success", 200);
             }else{
-                Tracks::create([
-                    'track_name' => $params["track_name"],
-                    'mp3' => $params['mp3'],
-                    'lyrics' => $params['lyrics'],
-                    'artist_id' => $params["artist_id"]
-                ]);
+                return response("no file uploaded", 401);
             }
-            return response("Success", 200);
-           
+
         }
         
     }
